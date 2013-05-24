@@ -10,32 +10,35 @@ import curses
 import time
 topiclist = []
 
+# CHANGE THESE TO SUIT ENVIRONMENT
+broker = "test.mosquitto.org"
+topics = "$SYS/broker/load/#"
 
 def on_connect(mosq, userdata, rc):
-    print("Connection returned " + str(rc))
+    stdscr.addstr(curses.LINES-1,0,"Connection to %s returned %s" % (broker,rc))
+    stdscr.noutrefresh()
+    curses.doupdate()
 
 def on_message(mosq, userdata, msg):
     if msg.topic in topiclist:
-        offset = 3 + topiclist.index(msg.topic)
+        offset = topiclist.index(msg.topic)
     else:
         topiclist.append(msg.topic)
-        offset = 3 + topiclist.index(msg.topic)
-    stats_txt.addstr(offset, 2, msg.topic)
-    stats_txt.addstr(offset, 52, msg.payload)
-    stats_txt.refresh()
-    #print "%s Topic: %s, Value %s)" % (offset,msg.topic, msg.payload)
+        offset = topiclist.index(msg.topic)
+    stats_txt.addstr(offset, 0, msg.topic)
+    stats_txt.addstr(offset, 50, msg.payload)
+    stats_txt.noutrefresh()
+    curses.doupdate()
 
-client = mosquitto.Mosquitto("TestSubscriber-AE_001")
+client = mosquitto.Mosquitto()
 client.on_message = on_message
 client.on_connect = on_connect
-#client.connect("breathalyser.ivec.org")
-client.connect("test.mosquitto.org")
-client.subscribe("$SYS/broker/load/#")
+client.connect(broker)
+client.subscribe(topics)
 
 # curses handling
 stdscr = curses.initscr()
-curses.noecho()
-curses.cbreak()
+stdscr.nodelay(1)
 curses.curs_set(0)
 if curses.has_colors():
     curses.start_color()
@@ -44,17 +47,19 @@ if curses.has_colors():
 # start 'er up capt'n
 stdscr.addstr("Pawsey Centre Monitoring (via MQTT)", curses.A_REVERSE)
 stdscr.chgat(-1,curses.A_REVERSE)
+stdscr.addstr(curses.LINES-1,curses.COLS-10,"q to Quit")
 
 stats = curses.newwin(curses.LINES-2,curses.COLS,1,0)
-stats_txt = stats.subwin(curses.LINES-6,curses.COLS-4,3,2)
+stats_txt = stats.subwin(curses.LINES-6,curses.COLS-4,2,2)
 
 stats.box()
 
 stdscr.noutrefresh()
 stats.noutrefresh()
 
-curses.doupdate()
 while client.loop() == 0:
+    if stdscr.getch() == ord("q"): 
+        break
     pass
 
 
