@@ -3,9 +3,10 @@ a range of environment sensors, loosely based on MQTT publish/subscribe
 
 Publishers / Sensors
 --------------------
-I'm using Wemos (ESP8266 nodemcu) based modules for convenience (they already have microUSB and voltage regulators attached)
-together with DHT22 shields for temp/humidity.
-Please note that you'll need to include mqtt support when you build the firmware, you'll also need luatool and esptool to upload files and flash new firmware.
+I'm using Wemos (ESP8266 nodemcu - see http://wemos.cc/ for details) based modules for convenience 
+(they already have microUSB and voltage regulators attached) together with DHT22 shields for temp/humidity.
+Please note that you'll need to include mqtt support when you build the firmware, you'll also need luatool
+and esptool to upload files and flash new firmware.
 
 Not included here is my init.lua, as it contains the wifi connection info. A sanitized one is pasted below:
 ```lua
