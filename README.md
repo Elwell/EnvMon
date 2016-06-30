@@ -32,8 +32,10 @@ end)
 
 Broker
 ------
-Mosquitto running on a Virtual Machine on the iVEC infrastructure.
+Mosquitto (see http://mosquitto.org)
 
 Subscribers
 -----------
 subcurses.py -- Python mosquitto client that displays the topic and value in a basic curses interface
+
+websockets gauges
