@@ -11,8 +11,11 @@ import time
 topiclist = []
 
 # CHANGE THESE TO SUIT ENVIRONMENT
-broker = "test.mosquitto.org"
-topics = "$SYS/broker/load/#"
+#broker = "hydra.mgdm.net"
+broker = "mythic"
+#broker = "test.mosquitto.org"    # hostname or IP address
+topics = "#"                      # won't take a list
+xoffset = 50                      # how far over do we print values
 
 def on_connect(mosq, userdata, rc):
     stdscr.addstr(curses.LINES-1,0,"Connection to %s returned %s" % (broker,rc))
@@ -26,8 +29,9 @@ def on_message(mosq, userdata, msg):
         topiclist.append(msg.topic)
         offset = topiclist.index(msg.topic)
     stats_txt.addstr(offset, 0, msg.topic)
-    stats_txt.addstr(offset, 50, msg.payload)
+    stats_txt.addstr(offset, xoffset, msg.payload)
     stats_txt.noutrefresh()
+    stats_txt.clrtoeol()
     curses.doupdate()
 
 client = mosquitto.Mosquitto()
@@ -39,7 +43,7 @@ client.subscribe(topics)
 # curses handling
 stdscr = curses.initscr()
 stdscr.nodelay(1)
-curses.curs_set(0)
+#curses.curs_set(0)
 if curses.has_colors():
     curses.start_color()
 

@@ -1,17 +1,33 @@
-This repo contains scripts for the Pawsey Environmental Monitoring system
+This repo was originally forked from the Pawsey EnvMon tools, but has since been expanded to cover
+a range of environment sensors, loosely based on MQTT publish/subscribe
 
-It is based on a series of Raspberry Pi's (one per cell) which publish their information to a
-central MQTT (mosquitto) broker. Various subscribers can then display information as needed.
+Publishers / Sensors
+--------------------
+I'm using Wemos (ESP8266 nodemcu) based modules for convenience (they already have microUSB and voltage regulators attached)
+together with DHT22 shields for temp/humidity.
+Please note that you'll need to include mqtt support when you build the firmware, you'll also need luatool and esptool to upload files and flash new firmware.
 
-Publishers
-----------
-Each Raspberry Pi has the following hardware:
-* 1 DHT-22, which is polled using a GPIO pin and powered from the 3.3v bus.
-* 1 SheepWalk RPI2 i2c->1-wire bus adaptor
-* N DS18B20 temperature sensors positioned around the equipment
+Not included here is my init.lua, as it contains the wifi connection info. A sanitized one is pasted below:
+```lua
+-- Basic Connection in init.lua, anything more complex called later
+-- AE 2016-06-08
 
-Basic setup on the R-Pi includes a Debian installation on the SD card,
-with NTP and static IP addressing. Broker addresses need DNS (flexibility vs relying on an external service)
+print("Connecting to WiFi from init")
+wifi.setmode(wifi.STATION)
+wifi.sta.config("ESSID HERE","PASSWORD HERE")
+--wifi.sta.connect()
+tmr.alarm(1, 1000, 1, function()
+    if wifi.sta.getip()== nil then
+        print("IP unavaiable, Waiting...")
+    else
+        tmr.stop(1)
+        print("ChipID is: " .. node.chipid())
+        print("The module MAC address is: " .. wifi.ap.getmac())
+        print("Config done, IP is "..wifi.sta.getip())
+        dofile('wemos_dht.lua')
+    end
+end)
+```
 
 
 Broker
