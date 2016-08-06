@@ -30,6 +30,10 @@ tmr.alarm(1, 1000, 1, function()
 end)
 ```
 
+The Water Tank measurements are done with an Arduino connected to a MaxBotix MB7389 
+This gives me 1mm resolution to measure the water level inside the tank 
+Data sheet available from http://www.maxbotix.com/Ultrasonic_Sensors/MB7389.htm
+
 
 Broker
 ------
