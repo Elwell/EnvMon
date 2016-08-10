@@ -19,28 +19,32 @@ void setup() {
   digitalWrite(RANGE_PIN,LOW);
 }
 
-void read_sensor(){
+int read_sensor(){
+  const int cycles = 5 ;
+  int avg = 0;
   digitalWrite(RANGE_PIN,HIGH);
-  for (int i=0 ; i < 5 ; i++) {
+  for (int i=0 ; i < cycles ; i++) {
       mm = pulseIn(SENS_PIN, HIGH);
-      Serial.print(mm);
-      Serial.print(" ");
+      avg += mm;
+  //    Serial.print(mm);
+  //    Serial.print(" ");
   }
-  Serial.println();
+  //Serial.println();
   digitalWrite(RANGE_PIN,LOW);
+  return (avg/cycles);
 }
 
-void printvol(){
+void printvol(int mm){
   int level = THEIGHT - mm ;
-  Serial.println(level);
-  float volume = (3.14 * TRADIUS * TRADIUS * level)/100000 ; // should be remaining capacity in l
-  Serial.println(volume);
+  // Serial.println(level);
+  float volume = (3.14 * TRADIUS * TRADIUS * level)/1000000 ; // should be remaining capacity in l
+  // Serial.println(volume);
 }
 
 
 void loop() {
-  read_sensor();
-  Serial.println(mm);
-  printvol();
+  int foo = read_sensor();
+  Serial.println(foo);
+  printvol(foo);
   delay(3000); //make this match the refresh rate of the sensor
 }
