@@ -6,19 +6,11 @@ influxdb = 'http://192.168.1.250:8086/write?db=epa&precision=s'
 pm_url   = 'https://epa.tas.gov.au/air/live/epa_tas_latest_particle_data.txt'
 met_url  = 'https://epa.tas.gov.au/air/live/epa_tas_latest_met_data.txt'
 
-dstPM  = '/tmp/tas_particle.txt'
-dstMET = '/tmp/tas_met.txt'
-
 import requests
-#from datetime import datetime
 import time
-#from dateutil.parser import parse as parsedate
 import csv
 
 data = requests.get(pm_url)
-#url_time = data.headers['last-modified']
-#url_date = parsedate(url_time)
-#print(url_date)
 
 cr = csv.reader(data.text.splitlines(), skipinitialspace=True, delimiter=',')
 my_list = list(cr)
@@ -43,4 +35,3 @@ for row in my_list:
 r = requests.post(influxdb, data=postdata)
 if (r.status_code != 204):
     print(r.text)
-
